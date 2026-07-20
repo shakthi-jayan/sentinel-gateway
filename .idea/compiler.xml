@@ -8,12 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="backend-service" />
         <module name="gateway-service" />
+        <module name="downstream-b" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="backend-service" options="-parameters" />
+      <module name="downstream-b" options="-parameters" />
       <module name="gateway-service" options="-parameters" />
     </option>
   </component>
