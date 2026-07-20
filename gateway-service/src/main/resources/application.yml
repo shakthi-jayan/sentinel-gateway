@@ -11,16 +11,6 @@ spring:
       server:
         webmvc:
           routes:
-            - id: backend-route
-              uri: http://localhost:8081
-              predicates:
-                - Path=/api/v1/**
-              filters:
-                - name: RateLimit
-                  args:
-                    capacity: 5
-                    refill-tokens: 5
-                    refill-period: 10s
             - id: downstream-b-route
               uri: http://localhost:8082
               predicates:
