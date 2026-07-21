@@ -47,7 +47,13 @@ public class RateLimitConfig {
                 .filter(rateLimit(c -> c
                         .setCapacity(5)
                         .setPeriod(Duration.ofSeconds(10))
-                        .setKeyResolver(request -> "global")))
+                        .setKeyResolver(request -> {
+                            String forwardedFor = request.headers().firstHeader("X-Forwarded-For");
+                            if (forwardedFor != null && !forwardedFor.isBlank()) {
+                                return forwardedFor.split(",")[0].trim();
+                            }
+                            return request.servletRequest().getRemoteAddr();
+                        })))
                 .build();
     }
 }
