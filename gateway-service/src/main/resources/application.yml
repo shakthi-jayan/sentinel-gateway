@@ -6,12 +6,16 @@ spring:
     redis:
       host: localhost
       port: 6379
-  cloud:
-    gateway:
-      server:
-        webmvc:
-          routes:
-            - id: downstream-b-route
-              uri: http://localhost:8082
-              predicates:
-                - Path=/api/v2/**
+
+jwt:
+  secret: "a9f3c7d2e4b6f8a1c3d5e7f9b2a4c6d8e0f2a4b6c8d0e2f4a6c8e0f2b4d6a8c0"
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      downstreamBBreaker:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5

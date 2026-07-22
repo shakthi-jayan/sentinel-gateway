@@ -11,6 +11,7 @@ import io.lettuce.core.codec.RedisCodec;
 import io.lettuce.core.codec.StringCodec;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.function.HandlerFilterFunction;
 import org.springframework.web.servlet.function.RouterFunction;
 import org.springframework.web.servlet.function.ServerResponse;
 
@@ -23,6 +24,12 @@ import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFuncti
 
 @Configuration
 public class RateLimitConfig {
+
+    private final HandlerFilterFunction<ServerResponse, ServerResponse> jwtAuthFilter;
+
+    public RateLimitConfig(HandlerFilterFunction<ServerResponse, ServerResponse> jwtAuthFilter) {
+        this.jwtAuthFilter = jwtAuthFilter;
+    }
 
     @Bean
     public AsyncProxyManager<String> asyncProxyManager() {
@@ -44,6 +51,7 @@ public class RateLimitConfig {
         return route("backend-route-limited")
                 .GET("/api/v1/**", http())
                 .before(uri("http://localhost:8081"))
+                .filter(jwtAuthFilter)
                 .filter(rateLimit(c -> c
                         .setCapacity(5)
                         .setPeriod(Duration.ofSeconds(10))
