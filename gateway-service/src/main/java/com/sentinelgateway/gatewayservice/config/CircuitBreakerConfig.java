@@ -20,7 +20,7 @@ public class CircuitBreakerConfig {
     public RouterFunction<ServerResponse> downstreamBWithBreaker() {
         return route("downstream-b-protected")
                 .route(path("/api/v2/**"), http())
-                .before(uri("http://localhost:8082"))
+                .before(uri("http://downstream-b:8082"))
                 .filter(circuitBreaker("downstreamBBreaker", URI.create("forward:/fallback/downstream-b")))
                 .build()
                 .and(route("downstream-b-fallback")

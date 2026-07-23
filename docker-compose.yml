@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  redis:
+    image: redis
+    container_name: sentinel-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - sentinel-network
+
+  backend-service:
+    build: ./backend-service
+    container_name: backend-service
+    ports:
+      - "8081:8081"
+    networks:
+      - sentinel-network
+
+  downstream-b:
+    build: ./downstream-b
+    container_name: downstream-b
+    ports:
+      - "8082:8082"
+    networks:
+      - sentinel-network
+
+  gateway-service:
+    build: ./gateway-service
+    container_name: gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - backend-service
+      - downstream-b
+    networks:
+      - sentinel-network
+
+networks:
+  sentinel-network:
+    driver: bridge

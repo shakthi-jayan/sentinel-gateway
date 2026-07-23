@@ -34,7 +34,7 @@ public class RateLimitConfig {
     @Bean
     public AsyncProxyManager<String> asyncProxyManager() {
         RedisClient redisClient = RedisClient.create(
-                RedisURI.builder().withHost("localhost").withPort(6379).build());
+                RedisURI.builder().withHost("redis").withPort(6379).build());
 
         StatefulRedisConnection<String, byte[]> connection =
                 redisClient.connect(RedisCodec.of(StringCodec.UTF8, ByteArrayCodec.INSTANCE));
@@ -50,7 +50,7 @@ public class RateLimitConfig {
     public RouterFunction<ServerResponse> rateLimitedBackendRoute() {
         return route("backend-route-limited")
                 .GET("/api/v1/**", http())
-                .before(uri("http://localhost:8081"))
+                .before(uri("http://backend-service:8081"))
                 .filter(jwtAuthFilter)
                 .filter(rateLimit(c -> c
                         .setCapacity(5)
